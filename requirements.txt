@@ -1,3 +1,5 @@
+click==8.1.7
+dearpygui==1.11.1
 et-xmlfile==1.1.0
 numpy==1.26.4
 openpyxl==3.1.2
@@ -5,4 +7,5 @@ pandas==2.2.2
 python-dateutil==2.9.0.post0
 pytz==2024.1
 six==1.16.0
+tzdata==2024.1
 XlsxWriter==3.2.0
