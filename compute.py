@@ -132,7 +132,7 @@ def populate_product_details(market):
     market["total_ext_selling_price"] = total_ext_selling_price(market)
 
 
-def process_data(filepath, output_path, finished_callback):
+def process_data(filepath, output_path, finished_callback, progress_callback=None):
     """Process the data and return a dataframe"""
 
     df = pd.read_excel(filepath, sheet_name="input")
@@ -195,14 +195,21 @@ def process_data(filepath, output_path, finished_callback):
         print((len(df.index) - row)/(len(df.index)) * 100, "%")
 
 
+    count = 0
     with concurrent.futures.ProcessPoolExecutor() as executor:
 
         for product in products.values():
+            count += 1
+
             for currency in product.values():
                 for market in currency.values():
                     if len(market["data"]) != 0:
 
                         executor.submit(populate_product_details(market))
+
+            print(count/len(products) * 100, "%")
+            if progress_callback:
+                progress_callback(count/len(products))
         
     finished_callback([products, counts], output_path)
     return [products, counts]
