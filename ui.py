@@ -122,6 +122,16 @@ def process_button_pressed():
   process_data_with_ui()
 
 
+
+
+#### Goofy MP Workaround for pyinstaller ####
+
+def mp_enable_freeze():
+  mp.freeze_support()
+
+
+##### MAIN #####
+
 def main():
   dpg.create_context()
   dpg.create_viewport(height=300)
@@ -156,4 +166,5 @@ def main():
   dpg.destroy_context()
 
 if __name__ == "__main__":
+  mp_enable_freeze()
   main()
