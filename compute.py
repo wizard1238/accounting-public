@@ -16,6 +16,16 @@ class ProductTypes(Enum):
     SERVICES = "Services"
     SUPPORT = "Support"
     USERS = "Users"
+    DIGITAL_HUB_CUSTOMER_EDUCATION = "Digital Hub: Customer Education"
+    INSIDED = "Insided"
+
+
+# for making sure case is consistent
+PRODUCT_TYPE_CASE_LUT = {}
+for product in ProductTypes:
+    PRODUCT_TYPE_CASE_LUT.update({
+        product.value.lower(): product.value
+    })
 
 
 def median(input):
@@ -86,16 +96,12 @@ def to_dataframe(products):
     return df
 
 
-# def write_to_excel(df: pd.DataFrame, excel_writer: str, sheet: str):
-#     """write dataframe to excel"""
-#     df.to_excel(excel_writer, sheet_name=sheet)
-
 def write_to_excel(products: list[pd.DataFrame], output_path: str):
     """write products to excel"""
     writer = pd.ExcelWriter(output_path, engine='xlsxwriter')
     to_dataframe(products[0]).to_excel(writer, sheet_name='results')
     pd.DataFrame(data=products[1]).to_excel(writer, sheet_name='reconciliation')
-    writer.save()
+    writer.close()
 
 
 def products_template():
@@ -155,11 +161,17 @@ def process_data(filepath, output_path, finished_callback):
         unit_selling_price = 0 if math.isnan(df.loc[row]["Unit Selling Price"]) else int(df.loc[row]["Unit Selling Price"])
         ext_selling_price = 0 if math.isnan(df.loc[row]["Ext Selling Price"]) else df.loc[row]["Ext Selling Price"]
 
+        # remove casing differences from family
+        try:
+            family = PRODUCT_TYPE_CASE_LUT.get(family.lower(), family)
+        except:
+            raise ValueError(f"Invalid product family: {family}")
+
         counts[family][order_direction]["price"] += ext_selling_price
         counts[family][order_direction]["quantity"] += 1
 
         match family:
-            case ProductTypes.SERVICE.value | ProductTypes.SERVICES.value | ProductTypes.SUPPORT.value:
+            case ProductTypes.SUPPORT.value:
                 df.drop([row])
                 continue
             case _:
