@@ -156,9 +156,9 @@ def process_data(filepath, output_path, finished_callback, progress_callback=Non
 
     for row in reversed(range(len(df.index))):
         family = df.loc[row]["Product Family"]
-        order_quantity = 0 if math.isnan(df.loc[row]["Order Quantity"]) else int(df.loc[row]["Order Quantity"])
+        order_quantity = 0 if math.isnan(df.loc[row]["Order Quantity"]) else float(df.loc[row]["Order Quantity"])
         order_direction = "positive" if order_quantity > 0 else "negative"
-        unit_selling_price = 0 if math.isnan(df.loc[row]["Unit Selling Price"]) else int(df.loc[row]["Unit Selling Price"])
+        unit_selling_price = 0 if math.isnan(df.loc[row]["Unit Selling Price"]) else float(df.loc[row]["Unit Selling Price"])
         ext_selling_price = 0 if math.isnan(df.loc[row]["Ext Selling Price"]) else df.loc[row]["Ext Selling Price"]
 
         # remove casing differences from family
@@ -180,7 +180,6 @@ def process_data(filepath, output_path, finished_callback, progress_callback=Non
                     continue
 
         product_sku = df.loc[row]["Product SKU"]
-
 
         if product_sku not in products:
             products.update({
