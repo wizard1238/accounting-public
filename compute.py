@@ -18,6 +18,11 @@ class ProductTypes(Enum):
     USERS = "Users"
     DIGITAL_HUB_CUSTOMER_EDUCATION = "Digital Hub: Customer Education"
     INSIDED = "Insided"
+    CUSTOMER_SUCCESS = "Customer Success"
+    PRODUCT_EXPERIENCE = "Product Experience"
+    CUSTOMER_EDUCATION = "Customer Education"
+    CUSTOMER_COMMUNITIES = "Customer Communities"
+    STAIRCASE_AI = "Staircase AI"
 
 
 # for making sure case is consistent
@@ -154,6 +159,7 @@ def process_data(filepath, output_path, finished_callback, progress_callback=Non
             }
         })
 
+
     for row in reversed(range(len(df.index))):
         family = df.loc[row]["Product Family"]
         order_quantity = 0 if math.isnan(df.loc[row]["Order Quantity"]) else float(df.loc[row]["Order Quantity"])
@@ -179,15 +185,18 @@ def process_data(filepath, output_path, finished_callback, progress_callback=Non
                     df.drop([row])
                     continue
 
+        trans_currency = df.loc[row]["Trans Currency"]
+        customer_class = df.loc[row]["Customer Class"]
         product_sku = df.loc[row]["Product SKU"]
+
+        if pd.isna(trans_currency) or pd.isna(customer_class) or pd.isna(product_sku):
+            df.drop([row])
+            continue
 
         if product_sku not in products:
             products.update({
                 product_sku: products_template()
             })
-
-        trans_currency = df.loc[row]["Trans Currency"]
-        customer_class = df.loc[row]["Customer Class"]
 
         products[product_sku][trans_currency][customer_class]["data"].append(df.loc[row])
         
