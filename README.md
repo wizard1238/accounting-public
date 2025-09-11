@@ -2,5 +2,5 @@ To make an executable, use pyinstaller:
 
 ```bash
 $ pip install pyinstaller
-$ pyinstaller ui.py
+$ pyinstaller ui.py --hiden-import dearpygui
 ```
